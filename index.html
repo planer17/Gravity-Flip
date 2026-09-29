@@ -1,0 +1,1781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Gravity Flip</title>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div
+  id="gameWrapper"
+  class="game-wrapper mode-classic dimension-normal"
+>
+
+  <!-- ===================================================== -->
+  <!-- TOP BAR -->
+  <!-- ===================================================== -->
+
+  <header class="top-bar">
+
+    <div class="game-title">
+      <span class="logo-icon">⚡</span>
+      <span>GRAVITY FLIP</span>
+    </div>
+
+    <button
+      id="dimensionBadge"
+      class="dimension-badge"
+      title="Switch Dimension"
+    >
+      🌍 NORMAL
+    </button>
+
+    <div class="stats">
+
+      <div class="stat">
+        <span>⭐ SCORE</span>
+        <b id="score">0</b>
+      </div>
+
+      <div class="stat">
+        <span id="bestLabel">🏆 BEST</span>
+        <b id="bestScore">0</b>
+      </div>
+
+      <div class="stat spark-stat">
+        <span>💎 SPARKS</span>
+        <b id="sparkCount">0</b>
+      </div>
+
+      <div class="stat heart-stat">
+        <span>❤️ HEARTS</span>
+        <b id="heartCount">0</b>
+      </div>
+
+    </div>
+
+  </header>
+
+
+  <!-- ===================================================== -->
+  <!-- LEVEL HUD -->
+  <!-- ===================================================== -->
+
+  <div
+    id="levelHud"
+    class="level-hud hidden"
+  >
+
+    <span id="hudModeName">
+      ⚡ CLASSIC
+    </span>
+
+    <span>
+      LEVEL
+      <b id="hudLevel">1</b>
+    </span>
+
+    <span>
+      TARGET
+      <b id="hudTarget">250</b>
+    </span>
+
+  </div>
+
+
+  <!-- ===================================================== -->
+  <!-- MODE RULE HUD -->
+  <!-- ===================================================== -->
+
+  <div
+    id="modeRuleHud"
+    class="mode-rule-hud hidden"
+  >
+    <span id="modeRuleText">
+      ⚡ FLIP READY
+    </span>
+  </div>
+
+
+  <!-- ===================================================== -->
+  <!-- ICON ABILITY HUD -->
+  <!-- ===================================================== -->
+
+  <div
+    id="abilityHud"
+    class="ability-hud hidden"
+  >
+
+    <span id="abilityHudIcon">
+      ■
+    </span>
+
+    <div>
+
+      <strong id="abilityHudName">
+        Stable Core
+      </strong>
+
+      <small id="abilityHudDescription">
+        World movement is 3% slower.
+      </small>
+
+    </div>
+
+  </div>
+
+
+  <!-- ===================================================== -->
+  <!-- BOSS HUD -->
+  <!-- ===================================================== -->
+
+  <div
+    id="bossHud"
+    class="boss-hud hidden"
+  >
+
+    <div class="boss-top">
+
+      <div class="boss-name">
+        👾
+        <span id="bossName">BOSS</span>
+      </div>
+
+      <div
+        id="bossTimerText"
+        class="boss-time"
+      >
+        25.0s
+      </div>
+
+    </div>
+
+    <div class="boss-health">
+
+      <div
+        id="bossHealthFill"
+        class="boss-health-fill"
+      ></div>
+
+    </div>
+
+  </div>
+
+
+  <div
+    id="bossWarning"
+    class="boss-warning hidden"
+  >
+    ⚠ BOSS INCOMING ⚠
+  </div>
+
+
+  <div
+    id="gameMessage"
+    class="game-message hidden"
+  >
+
+    <strong id="gameMessageTitle">
+      SPEED UP!
+    </strong>
+
+    <span id="gameMessageText">
+      Things are getting faster.
+    </span>
+
+  </div>
+
+
+  <!-- ===================================================== -->
+  <!-- CANVAS -->
+  <!-- ===================================================== -->
+
+  <canvas id="gameCanvas"></canvas>
+
+
+  <!-- ===================================================== -->
+  <!-- MAIN MENU -->
+  <!-- ===================================================== -->
+
+  <section
+    id="mainMenu"
+    class="screen main-menu"
+  >
+
+    <div class="menu-logo">
+      ⚡
+    </div>
+
+    <h1>
+      GRAVITY FLIP
+    </h1>
+
+    <p class="subtitle">
+      5 modes • 4 dimensions • 80 levels per dimension •
+      Hearts • Sparks • 300+ shop rewards
+    </p>
+
+
+    <div class="current-dimension-card">
+
+      <div
+        id="mainDimensionIcon"
+        class="dimension-card-icon"
+      >
+        🌍
+      </div>
+
+      <div class="current-dimension-info">
+
+        <small>
+          CURRENT DIMENSION
+        </small>
+
+        <strong id="currentDimensionName">
+          NORMAL DIMENSION
+        </strong>
+
+        <span id="currentDimensionFlow">
+          STANDARD WORLD
+        </span>
+
+      </div>
+
+      <button id="dimensionButton">
+        🌀 SWITCH
+      </button>
+
+    </div>
+
+
+    <div class="global-wallet">
+
+      <div>
+        💎 GLOBAL SPARKS
+        <strong id="menuSparks">0</strong>
+      </div>
+
+      <div>
+        ❤️ GLOBAL HEARTS
+        <strong id="menuHearts">0</strong>
+      </div>
+
+    </div>
+
+
+    <div class="menu-stats five-mode-stats">
+
+      <div>
+        <span>🏆 CLASSIC</span>
+        <strong id="menuClassicBest">0</strong>
+      </div>
+
+      <div>
+        <span>⚓ GROUND FLIP</span>
+        <strong id="menuGroundBest">0</strong>
+      </div>
+
+      <div>
+        <span>🔥 NO GROUND</span>
+        <strong id="menuNoGroundBest">0</strong>
+      </div>
+
+      <div>
+        <span>❄️ NO CEILING</span>
+        <strong id="menuNoCeilingBest">0</strong>
+      </div>
+
+      <div>
+        <span>✨ NO TOUCH</span>
+        <strong id="menuNoTouchBest">0</strong>
+      </div>
+
+    </div>
+
+
+    <div class="unlock-progress-grid">
+
+      <div class="unlock-progress-card">
+
+        <span>
+          ⚓ GROUND FLIP
+        </span>
+
+        <strong id="groundUnlockStatus">
+          0 / 1000
+        </strong>
+
+      </div>
+
+
+      <div class="unlock-progress-card">
+
+        <span>
+          🔥 NO GROUND
+        </span>
+
+        <strong id="noGroundUnlockStatus">
+          LOCKED
+        </strong>
+
+      </div>
+
+
+      <div class="unlock-progress-card">
+
+        <span>
+          ❄️ NO CEILING
+        </span>
+
+        <strong id="noCeilingUnlockStatus">
+          LOCKED
+        </strong>
+
+      </div>
+
+
+      <div class="unlock-progress-card">
+
+        <span>
+          ✨ NO TOUCH
+        </span>
+
+        <strong id="noTouchUnlockStatus">
+          0 / 700 + 0 / 700
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <div class="main-mode-buttons">
+
+      <button
+        id="classicModeButton"
+        class="mode-button classic-mode-button"
+      >
+
+        <span class="mode-icon">
+          ⚡
+        </span>
+
+        <span class="mode-button-text">
+
+          <strong>
+            CLASSIC
+          </strong>
+
+          <small>
+            Flip gravity whenever you want.
+          </small>
+
+        </span>
+
+      </button>
+
+
+      <button
+        id="groundModeButton"
+        class="mode-button ground-mode-button locked"
+        disabled
+      >
+
+        <span
+          id="groundModeIcon"
+          class="mode-icon"
+        >
+          🔒
+        </span>
+
+        <span class="mode-button-text">
+
+          <strong>
+            GROUND FLIP
+          </strong>
+
+          <small id="groundModeDescription">
+            Reach 1000 in Classic Survival.
+          </small>
+
+        </span>
+
+      </button>
+
+
+      <button
+        id="noGroundModeButton"
+        class="mode-button no-ground-mode-button locked"
+        disabled
+      >
+
+        <span
+          id="noGroundModeIcon"
+          class="mode-icon"
+        >
+          🔒
+        </span>
+
+        <span class="mode-button-text">
+
+          <strong>
+            NO GROUND
+          </strong>
+
+          <small id="noGroundModeDescription">
+            Complete all Ground Flip levels.
+          </small>
+
+        </span>
+
+      </button>
+
+
+      <button
+        id="noCeilingModeButton"
+        class="mode-button no-ceiling-mode-button locked"
+        disabled
+      >
+
+        <span
+          id="noCeilingModeIcon"
+          class="mode-icon"
+        >
+          🔒
+        </span>
+
+        <span class="mode-button-text">
+
+          <strong>
+            NO CEILING
+          </strong>
+
+          <small id="noCeilingModeDescription">
+            Complete all Ground Flip levels.
+          </small>
+
+        </span>
+
+      </button>
+
+
+      <button
+        id="noTouchModeButton"
+        class="mode-button no-touch-mode-button locked"
+        disabled
+      >
+
+        <span
+          id="noTouchModeIcon"
+          class="mode-icon"
+        >
+          🔒
+        </span>
+
+        <span class="mode-button-text">
+
+          <strong>
+            NO TOUCH
+          </strong>
+
+          <small id="noTouchModeDescription">
+            Reach 700 in No Ground + 700 in No Ceiling.
+          </small>
+
+        </span>
+
+      </button>
+
+    </div>
+
+
+    <div class="menu-buttons">
+
+      <button id="shopButton">
+        💎 MEGA SPARK SHOP
+      </button>
+
+      <button id="optionsButton">
+        ⚙️ OPTIONS
+      </button>
+
+    </div>
+
+
+    <p class="menu-tip">
+      SPACE / W / ↑ / CLICK = FLIP
+    </p>
+
+  </section>
+
+
+  <!-- ===================================================== -->
+  <!-- DIMENSIONS -->
+  <!-- ===================================================== -->
+
+  <section
+    id="dimensionMenu"
+    class="screen dimension-screen hidden"
+  >
+
+    <div class="big-icon">
+      🌀
+    </div>
+
+    <h2>
+      DIMENSIONS
+    </h2>
+
+    <p class="subtitle">
+      Each dimension has separate scores,
+      level completions and mode unlocks.
+      Sparks, Hearts and shop purchases are global.
+    </p>
+
+
+    <div
+      id="dimensionMenuGrid"
+      class="dimension-menu-grid"
+    ></div>
+
+
+    <div class="dimension-help">
+
+      <strong>
+        💾 SEPARATE DIMENSION SAVES
+      </strong>
+
+      <p>
+        Leaving a dimension does not delete its progress.
+        Returning restores that dimension exactly where you left it.
+      </p>
+
+      <p>
+        Down and Up dimensions run at 75% world speed.
+      </p>
+
+    </div>
+
+
+    <button
+      id="dimensionBackButton"
+      class="backButton"
+    >
+      ← BACK
+    </button>
+
+  </section>
+
+
+  <!-- ===================================================== -->
+  <!-- CLASSIC -->
+  <!-- ===================================================== -->
+
+  <section
+    id="classicMenu"
+    class="screen mode-menu hidden"
+  >
+
+    <div class="big-icon">
+      ⚡
+    </div>
+
+    <h2>
+      CLASSIC
+    </h2>
+
+    <p class="subtitle">
+      Flip gravity whenever you want.
+    </p>
+
+
+    <div class="mode-rule-card classic-rule-card">
+
+      <strong>
+        ⚡ CLASSIC RULES
+      </strong>
+
+      <p>
+        Gravity:
+        <span>Flip anytime</span>
+      </p>
+
+      <p>
+        Survival:
+        <span>Gets faster as your score rises</span>
+      </p>
+
+      <p>
+        Ground Flip unlock:
+        <span>1000 Survival score</span>
+      </p>
+
+      <p>
+        Levels:
+        <span>16 levels + bosses</span>
+      </p>
+
+    </div>
+
+
+    <div class="menu-buttons vertical-menu">
+
+      <button
+        id="classicSurvivalButton"
+        class="primary-button"
+      >
+        ♾️ CLASSIC SURVIVAL
+      </button>
+
+      <button id="classicLevelsButton">
+        🏁 16 CLASSIC LEVELS
+      </button>
+
+    </div>
+
+
+    <button
+      class="backButton"
+      data-back="main"
+    >
+      ← BACK
+    </button>
+
+  </section>
+
+
+  <!-- ===================================================== -->
+  <!-- GROUND -->
+  <!-- ===================================================== -->
+
+  <section
+    id="groundMenu"
+    class="screen mode-menu ground-menu hidden"
+  >
+
+    <div class="big-icon">
+      ⚓
+    </div>
+
+    <h2>
+      GROUND FLIP
+    </h2>
+
+    <p class="subtitle">
+      Gravity can only be changed while touching a surface.
+    </p>
+
+
+    <div class="mode-rule-card ground-rule-card">
+
+      <strong>
+        ⚓ GROUND FLIP RULES
+      </strong>
+
+      <p>
+        On floor / ceiling:
+        <span>Flip ready</span>
+      </p>
+
+      <p>
+        In air:
+        <span class="danger-text">
+          Flip locked
+        </span>
+      </p>
+
+      <p>
+        Levels:
+        <span>Full levels + bosses</span>
+      </p>
+
+      <p>
+        Boss:
+        <span>25 seconds</span>
+      </p>
+
+    </div>
+
+
+    <div class="menu-buttons vertical-menu">
+
+      <button
+        id="groundSurvivalButton"
+        class="ground-primary-button"
+      >
+        ♾️ GROUND FLIP SURVIVAL
+      </button>
+
+      <button id="groundLevelsButton">
+        ⚓ 16 GROUND FLIP LEVELS
+      </button>
+
+    </div>
+
+
+    <button
+      class="backButton"
+      data-back="main"
+    >
+      ← BACK
+    </button>
+
+  </section>
+
+
+  <!-- ===================================================== -->
+  <!-- NO GROUND -->
+  <!-- ===================================================== -->
+
+  <section
+    id="noGroundMenu"
+    class="screen mode-menu no-ground-menu hidden"
+  >
+
+    <div class="big-icon">
+      🔥
+    </div>
+
+    <h2>
+      NO GROUND
+    </h2>
+
+    <p class="subtitle">
+      After the grace period, touching the ground kills you.
+    </p>
+
+
+    <div class="mode-rule-card no-ground-rule-card">
+
+      <strong>
+        🔥 NO GROUND RULES
+      </strong>
+
+      <p>
+        Start:
+        <span>3-second safe period</span>
+      </p>
+
+      <p>
+        After grace:
+        <span class="danger-text">
+          Ground lethal
+        </span>
+      </p>
+
+      <p>
+        Special-mode speed:
+        <span>70%</span>
+      </p>
+
+      <p>
+        Boss:
+        <span>15 seconds</span>
+      </p>
+
+    </div>
+
+
+    <div class="menu-buttons vertical-menu">
+
+      <button
+        id="noGroundSurvivalButton"
+        class="no-ground-primary-button"
+      >
+        ♾️ NO GROUND SURVIVAL
+      </button>
+
+      <button id="noGroundLevelsButton">
+        🔥 16 NO GROUND LEVELS
+      </button>
+
+    </div>
+
+
+    <button
+      class="backButton"
+      data-back="main"
+    >
+      ← BACK
+    </button>
+
+  </section>
+
+
+  <!-- ===================================================== -->
+  <!-- NO CEILING -->
+  <!-- ===================================================== -->
+
+  <section
+    id="noCeilingMenu"
+    class="screen mode-menu no-ceiling-menu hidden"
+  >
+
+    <div class="big-icon">
+      ❄️
+    </div>
+
+    <h2>
+      NO CEILING
+    </h2>
+
+    <p class="subtitle">
+      After the grace period, touching the ceiling kills you.
+    </p>
+
+
+    <div class="mode-rule-card no-ceiling-rule-card">
+
+      <strong>
+        ❄️ NO CEILING RULES
+      </strong>
+
+      <p>
+        Start:
+        <span>3-second safe period</span>
+      </p>
+
+      <p>
+        After grace:
+        <span class="danger-text">
+          Ceiling lethal
+        </span>
+      </p>
+
+      <p>
+        Special-mode speed:
+        <span>70%</span>
+      </p>
+
+      <p>
+        Boss:
+        <span>15 seconds</span>
+      </p>
+
+    </div>
+
+
+    <div class="menu-buttons vertical-menu">
+
+      <button
+        id="noCeilingSurvivalButton"
+        class="no-ceiling-primary-button"
+      >
+        ♾️ NO CEILING SURVIVAL
+      </button>
+
+      <button id="noCeilingLevelsButton">
+        ❄️ 16 NO CEILING LEVELS
+      </button>
+
+    </div>
+
+
+    <button
+      class="backButton"
+      data-back="main"
+    >
+      ← BACK
+    </button>
+
+  </section>
+
+
+  <!-- ===================================================== -->
+  <!-- NO TOUCH -->
+  <!-- ===================================================== -->
+
+  <section
+    id="noTouchMenu"
+    class="screen mode-menu no-touch-menu hidden"
+  >
+
+    <div class="big-icon">
+      ✨
+    </div>
+
+    <h2>
+      NO TOUCH
+    </h2>
+
+    <p class="subtitle">
+      After the grace period, both surfaces are lethal.
+    </p>
+
+
+    <div class="mode-rule-card no-touch-rule-card">
+
+      <strong>
+        ✨ NO TOUCH RULES
+      </strong>
+
+      <p>
+        Unlock:
+        <span>700 No Ground + 700 No Ceiling</span>
+      </p>
+
+      <p>
+        Start:
+        <span>3-second safe period</span>
+      </p>
+
+      <p>
+        After grace:
+        <span class="danger-text">
+          Both surfaces lethal
+        </span>
+      </p>
+
+      <p>
+        Gravity:
+        <span>Flip anytime</span>
+      </p>
+
+    </div>
+
+
+    <div class="menu-buttons vertical-menu">
+
+      <button
+        id="noTouchSurvivalButton"
+        class="no-touch-primary-button"
+      >
+        ♾️ NO TOUCH SURVIVAL
+      </button>
+
+      <button id="noTouchLevelsButton">
+        ✨ 16 NO TOUCH LEVELS
+      </button>
+
+    </div>
+
+
+    <button
+      class="backButton"
+      data-back="main"
+    >
+      ← BACK
+    </button>
+
+  </section>
+
+
+  <!-- ===================================================== -->
+  <!-- LEVEL SCREENS -->
+  <!-- ===================================================== -->
+
+  <section
+    id="classicLevelsMenu"
+    class="screen levels-screen hidden"
+  >
+
+    <h2>⚡ CLASSIC LEVELS</h2>
+
+    <p class="subtitle">
+      Reach the target and survive the boss.
+    </p>
+
+    <div
+      id="classicLevelGrid"
+      class="level-grid"
+    ></div>
+
+    <button
+      id="classicLevelsBackButton"
+      class="backButton"
+    >
+      ← BACK
+    </button>
+
+  </section>
+
+
+  <section
+    id="groundLevelsMenu"
+    class="screen levels-screen hidden"
+  >
+
+    <h2>⚓ GROUND FLIP LEVELS</h2>
+
+    <div
+      id="groundLevelGrid"
+      class="level-grid"
+    ></div>
+
+    <button
+      id="groundLevelsBackButton"
+      class="backButton"
+    >
+      ← BACK
+    </button>
+
+  </section>
+
+
+  <section
+    id="noGroundLevelsMenu"
+    class="screen levels-screen hidden"
+  >
+
+    <h2>🔥 NO GROUND LEVELS</h2>
+
+    <div
+      id="noGroundLevelGrid"
+      class="level-grid"
+    ></div>
+
+    <button
+      id="noGroundLevelsBackButton"
+      class="backButton"
+    >
+      ← BACK
+    </button>
+
+  </section>
+
+
+  <section
+    id="noCeilingLevelsMenu"
+    class="screen levels-screen hidden"
+  >
+
+    <h2>❄️ NO CEILING LEVELS</h2>
+
+    <div
+      id="noCeilingLevelGrid"
+      class="level-grid"
+    ></div>
+
+    <button
+      id="noCeilingLevelsBackButton"
+      class="backButton"
+    >
+      ← BACK
+    </button>
+
+  </section>
+
+
+  <section
+    id="noTouchLevelsMenu"
+    class="screen levels-screen hidden"
+  >
+
+    <h2>✨ NO TOUCH LEVELS</h2>
+
+    <div
+      id="noTouchLevelGrid"
+      class="level-grid"
+    ></div>
+
+    <button
+      id="noTouchLevelsBackButton"
+      class="backButton"
+    >
+      ← BACK
+    </button>
+
+  </section>
+
+
+  <!-- ===================================================== -->
+  <!-- SHOP -->
+  <!-- ===================================================== -->
+
+  <section
+    id="shopMenu"
+    class="screen shop-screen hidden"
+  >
+
+    <h2>
+      💎 MEGA SPARK SHOP
+    </h2>
+
+    <p class="subtitle">
+      More than twice the original catalog.
+    </p>
+
+
+    <div class="shop-wallet">
+
+      <div>
+        💎 SPARKS
+        <strong id="shopSparkCount">0</strong>
+      </div>
+
+      <div>
+        ❤️ HEARTS
+        <strong id="shopHeartCount">0</strong>
+      </div>
+
+    </div>
+
+
+    <div class="global-shop-note">
+      Purchases are global across every dimension.
+      Dimension scores and level progress remain separate.
+    </div>
+
+
+    <!-- HEART -->
+
+    <h3 class="shop-section-title">
+      ❤️ SECOND LIFE HEART
+    </h3>
+
+
+    <div class="heart-shop-card">
+
+      <div class="heart-shop-icon">
+        ❤️
+      </div>
+
+      <div class="heart-shop-info">
+
+        <strong>
+          SECOND LIFE HEART
+        </strong>
+
+        <p>
+          Spend one after dying to continue the same run.
+        </p>
+
+        <span>
+          💎 2,000
+        </span>
+
+      </div>
+
+      <button id="buyHeartButton">
+        BUY HEART
+      </button>
+
+    </div>
+
+
+    <div class="heart-rules-card">
+
+      <strong>
+        ❤️ SURVIVAL HEART DROPS
+      </strong>
+
+      <p>
+        Score 0–199:
+        <span>0%</span>
+      </p>
+
+      <p>
+        Every +200:
+        <span>+1%</span>
+      </p>
+
+      <p>
+        Maximum chance:
+        <span>20%</span>
+      </p>
+
+      <p>
+        Maximum appearances:
+        <span>2 per run</span>
+      </p>
+
+    </div>
+
+
+    <!-- DIMENSIONS -->
+
+    <h3 class="shop-section-title">
+      🌀 DIMENSIONS
+    </h3>
+
+    <div
+      id="dimensionShopItems"
+      class="dimension-shop-grid"
+    ></div>
+
+
+    <!-- COLLECTIBLES -->
+
+    <h3 class="shop-section-title">
+      💎 COLLECTIBLES
+    </h3>
+
+
+    <div class="spark-info-panel">
+
+      <div class="spark-info-item">
+
+        <span class="spark-info-icon">
+          💎
+        </span>
+
+        <div>
+          <strong>NORMAL SPARK</strong>
+          <small>Worth 1 Spark</small>
+        </div>
+
+      </div>
+
+
+      <div class="spark-info-item blue-spark-info">
+
+        <span class="spark-info-icon">
+          🔷
+        </span>
+
+        <div>
+          <strong>RARE BLUE SPARK</strong>
+          <small>Worth 5–7 Sparks • now slightly more common</small>
+        </div>
+
+      </div>
+
+
+      <div class="spark-info-item heart-drop-info">
+
+        <span class="spark-info-icon">
+          ❤️
+        </span>
+
+        <div>
+          <strong>SURVIVAL HEART</strong>
+          <small>Drop chance can reach 20%</small>
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- COLORS -->
+
+    <h3 class="shop-section-title">
+      🎨 CHARACTER COLORS
+    </h3>
+
+    <p class="shop-description">
+      76 colors to unlock.
+    </p>
+
+    <div
+      id="colorShopItems"
+      class="shop-grid"
+    ></div>
+
+
+    <!-- ICONS -->
+
+    <h3 class="shop-section-title">
+      🔷 CHARACTER ICONS + ABILITIES
+    </h3>
+
+    <p class="shop-description">
+      76 icons. Every icon has its own passive power.
+    </p>
+
+    <div
+      id="iconShopItems"
+      class="icon-shop-grid"
+    ></div>
+
+
+    <!-- BLOCKS -->
+
+    <h3 class="shop-section-title">
+      🚧 OBSTACLE DESIGNS
+    </h3>
+
+    <p class="shop-description">
+      90 block designs.
+    </p>
+
+    <div
+      id="obstacleShopItems"
+      class="shop-grid"
+    ></div>
+
+
+    <!-- BACKGROUNDS -->
+
+    <h3 class="shop-section-title">
+      🌌 BACKGROUNDS
+    </h3>
+
+    <p class="shop-description">
+      64 worlds and environments.
+    </p>
+
+    <div
+      id="backgroundShopItems"
+      class="background-shop-grid"
+    ></div>
+
+
+    <button
+      class="backButton"
+      data-back="main"
+    >
+      ← BACK
+    </button>
+
+  </section>
+
+
+  <!-- ===================================================== -->
+  <!-- OPTIONS -->
+  <!-- ===================================================== -->
+
+  <section
+    id="optionsMenu"
+    class="screen options-screen hidden"
+  >
+
+    <h2>
+      ⚙️ OPTIONS
+    </h2>
+
+
+    <div class="option-row">
+
+      <span>
+        💥 Screen Shake
+      </span>
+
+      <button id="shakeToggle">
+        ON
+      </button>
+
+    </div>
+
+
+    <div class="option-row">
+
+      <span>
+        ✨ Particles
+      </span>
+
+      <button id="particlesToggle">
+        ON
+      </button>
+
+    </div>
+
+
+    <div class="controls-box">
+
+      <h3>
+        🎮 CONTROLS
+      </h3>
+
+      <div class="control-item">
+        <kbd>SPACE</kbd>
+        <span>Flip Gravity</span>
+      </div>
+
+      <div class="control-item">
+        <kbd>W</kbd>
+        <span>Flip Gravity</span>
+      </div>
+
+      <div class="control-item">
+        <kbd>↑</kbd>
+        <span>Flip Gravity</span>
+      </div>
+
+      <div class="control-item">
+        <kbd>R</kbd>
+        <span>Restart only after Game Over</span>
+      </div>
+
+      <div class="control-item">
+        <kbd>ESC</kbd>
+        <span>Main Menu</span>
+      </div>
+
+    </div>
+
+
+    <button
+      class="backButton"
+      data-back="main"
+    >
+      ← BACK
+    </button>
+
+  </section>
+
+
+  <!-- ===================================================== -->
+  <!-- GAME OVER -->
+  <!-- ===================================================== -->
+
+  <section
+    id="gameOverScreen"
+    class="screen game-over-screen hidden"
+  >
+
+    <div class="big-icon">
+      💥
+    </div>
+
+    <h2>
+      GAME OVER
+    </h2>
+
+
+    <div class="game-over-stats">
+
+      <div class="game-over-score">
+
+        <span>
+          SCORE
+        </span>
+
+        <strong id="finalScore">
+          0
+        </strong>
+
+      </div>
+
+
+      <div class="game-over-score">
+
+        <span>
+          SPARKS COLLECTED
+        </span>
+
+        <strong id="runSparks">
+          0
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <p
+      id="newBestText"
+      class="new-best-text hidden"
+    >
+      🏆 NEW DIMENSION BEST!
+    </p>
+
+
+    <p id="levelFailText"></p>
+
+
+    <div
+      id="secondLifePanel"
+      class="second-life-panel"
+    >
+
+      <div class="second-life-heart">
+        ❤️
+      </div>
+
+      <div class="second-life-info">
+
+        <strong>
+          SECOND LIFE
+        </strong>
+
+        <span>
+          Hearts available:
+          <b id="deathHeartCount">0</b>
+        </span>
+
+      </div>
+
+      <button
+        id="useHeartButton"
+        class="heart-button"
+      >
+        ❤️ USE HEART
+      </button>
+
+    </div>
+
+
+    <div class="restart-hint">
+      PRESS
+      <kbd>R</kbd>
+      TO RESTART
+    </div>
+
+
+    <div class="end-screen-buttons">
+
+      <button
+        id="restartButton"
+        class="primary-button"
+      >
+        🔄 PLAY AGAIN
+      </button>
+
+      <button id="gameOverMenuButton">
+        🏠 MAIN MENU
+      </button>
+
+    </div>
+
+  </section>
+
+
+  <!-- ===================================================== -->
+  <!-- LEVEL COMPLETE -->
+  <!-- ===================================================== -->
+
+  <section
+    id="levelCompleteScreen"
+    class="screen level-complete-screen hidden"
+  >
+
+    <div
+      id="completeIcon"
+      class="big-icon"
+    >
+      🏆
+    </div>
+
+    <h2>
+      LEVEL COMPLETE!
+    </h2>
+
+
+    <p id="levelCompleteText"></p>
+
+
+    <div
+      id="completeBadge"
+      class="complete-badge"
+    >
+      ✓ COMPLETE
+    </div>
+
+
+    <div class="level-result-stats">
+
+      <div>
+        ⭐ SCORE
+        <strong id="completeScore">0</strong>
+      </div>
+
+      <div>
+        💎 SPARKS
+        <strong id="completeSparks">0</strong>
+      </div>
+
+    </div>
+
+
+    <div class="end-screen-buttons">
+
+      <button
+        id="nextLevelButton"
+        class="primary-button"
+      >
+        ▶ NEXT LEVEL
+      </button>
+
+      <button id="replayLevelButton">
+        🔄 REPLAY LEVEL
+      </button>
+
+      <button id="levelCompleteMenuButton">
+        🏠 MAIN MENU
+      </button>
+
+    </div>
+
+  </section>
+
+
+  <!-- ===================================================== -->
+  <!-- UNLOCK SCREENS -->
+  <!-- ===================================================== -->
+
+  <section
+    id="groundUnlockScreen"
+    class="screen unlock-screen hidden"
+  >
+
+    <div class="unlock-icon">
+      🔓
+    </div>
+
+    <h2>
+      MODE UNLOCKED!
+    </h2>
+
+    <h3>
+      ⚓ GROUND FLIP
+    </h3>
+
+    <p>
+      You reached 1000 Classic Survival in
+      <strong id="groundUnlockDimensionName">
+        this dimension
+      </strong>.
+    </p>
+
+    <button
+      id="enterGroundModeButton"
+      class="ground-primary-button"
+    >
+      ⚓ ENTER GROUND FLIP
+    </button>
+
+    <button id="groundUnlockMenuButton">
+      🏠 MAIN MENU
+    </button>
+
+  </section>
+
+
+  <section
+    id="dualModeUnlockScreen"
+    class="screen unlock-screen hidden"
+  >
+
+    <div class="unlock-icon">
+      🔓
+    </div>
+
+    <h2>
+      TWO MODES UNLOCKED!
+    </h2>
+
+    <div class="double-unlock-icons">
+      <span>🔥</span>
+      <span>❄️</span>
+    </div>
+
+    <h3>
+      NO GROUND + NO CEILING
+    </h3>
+
+    <p>
+      You completed all 16 Ground Flip levels
+      in this dimension.
+    </p>
+
+
+    <div class="unlock-button-grid">
+
+      <button
+        id="enterNoGroundModeButton"
+        class="no-ground-primary-button"
+      >
+        🔥 NO GROUND
+      </button>
+
+      <button
+        id="enterNoCeilingModeButton"
+        class="no-ceiling-primary-button"
+      >
+        ❄️ NO CEILING
+      </button>
+
+    </div>
+
+
+    <button id="dualUnlockMenuButton">
+      🏠 MAIN MENU
+    </button>
+
+  </section>
+
+
+  <section
+    id="noTouchUnlockScreen"
+    class="screen unlock-screen hidden"
+  >
+
+    <div class="unlock-icon">
+      ✨
+    </div>
+
+    <h2>
+      FINAL MODE UNLOCKED!
+    </h2>
+
+    <h3>
+      ✨ NO TOUCH
+    </h3>
+
+    <p>
+      You reached 700 in No Ground Survival
+      and 700 in No Ceiling Survival.
+    </p>
+
+    <button
+      id="enterNoTouchModeButton"
+      class="no-touch-primary-button"
+    >
+      ✨ ENTER NO TOUCH
+    </button>
+
+    <button id="noTouchUnlockMenuButton">
+      🏠 MAIN MENU
+    </button>
+
+  </section>
+
+
+  <!-- ===================================================== -->
+  <!-- MASTER -->
+  <!-- ===================================================== -->
+
+  <section
+    id="masterCompleteScreen"
+    class="screen master-complete-screen hidden"
+  >
+
+    <div class="unlock-icon">
+      👑
+    </div>
+
+    <h2>
+      DIMENSION MASTER!
+    </h2>
+
+    <p id="masterCompleteText">
+      You completed all 80 levels in this dimension.
+    </p>
+
+
+    <div class="master-mode-list">
+
+      <span>✓ Classic</span>
+      <span>✓ Ground Flip</span>
+      <span>✓ No Ground</span>
+      <span>✓ No Ceiling</span>
+      <span>✓ No Touch</span>
+
+    </div>
+
+
+    <button
+      id="masterCompleteMenuButton"
+      class="primary-button"
+    >
+      👑 MAIN MENU
+    </button>
+
+  </section>
+
+</div>
+
+<script src="game.js"></script>
+
+</body>
+</html>
